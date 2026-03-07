@@ -5,8 +5,6 @@ DEFAULT_SITE_NAMES = (
 	"Englewood",
 	"Hackensack",
 	"Mahwah",
-	"Paterson - Catholic Charities",
-	"Pop-up Distribution",
 	"Ringwood",
 	"Saddle Brook",
 	"Warehouse (Mahwah)",
@@ -26,12 +24,9 @@ class Site(models.Model):
 
 	@classmethod
 	def ensure_default_sites(cls) -> None:
-		if cls.objects.exists():
-			return
-		cls.objects.bulk_create(
-			[cls(name=name, is_active=True) for name in DEFAULT_SITE_NAMES],
-			ignore_conflicts=True,
-		)
+		for name in DEFAULT_SITE_NAMES:
+			cls.objects.update_or_create(name=name, defaults={"is_active": True})
+		cls.objects.exclude(name__in=DEFAULT_SITE_NAMES).update(is_active=False)
 
 
 class Donation(models.Model):
