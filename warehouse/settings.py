@@ -118,5 +118,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "donations@cfa.local"
+
 LOGIN_REDIRECT_URL = "donation-create"
 LOGOUT_REDIRECT_URL = "login"

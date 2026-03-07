@@ -1,10 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 672 672" role="img" aria-labelledby="title desc">
   <title id="title">Center for Food Action logo</title>
-  <desc id="desc">CFA logo with navy text and green circular arc.</desc>
-  <rect width="420" height="420" fill="#ffffff"/>
-  <path d="M 25 245 A 185 185 0 0 1 360 135" fill="none" stroke="#6E993B" stroke-width="11"/>
-  <path d="M 360 135 A 175 175 0 0 1 220 395" fill="none" stroke="#6E993B" stroke-width="11"/>
-  <text x="70" y="245" fill="#113A64" font-size="125" font-weight="700" font-family="Arial, Helvetica, sans-serif" letter-spacing="1">CFA</text>
-  <text x="82" y="290" fill="#113A64" font-size="47" font-weight="600" font-family="Arial, Helvetica, sans-serif">Center for Food</text>
-  <text x="82" y="350" fill="#113A64" font-size="78" font-weight="700" font-family="Arial, Helvetica, sans-serif">ACTION</text>
+  <desc id="desc">Green CFA logo with circular stroke and text.</desc>
+
+  <g fill="none" stroke="#789A03" stroke-width="18" stroke-linecap="round">
+    <path d="M 44 418 A 292 292 0 0 1 622 210"/>
+    <path d="M 622 210 A 292 292 0 0 1 550 608"/>
+  </g>
+
+  <g fill="#789A03" font-family="Arial, Helvetica, sans-serif">
+    <text x="100" y="417" font-size="220" font-weight="700" letter-spacing="2">CFA</text>
+    <rect x="100" y="434" width="468" height="8" rx="4"/>
+    <text x="130" y="496" font-size="72" font-weight="700">Center for Food</text>
+    <text x="128" y="594" font-size="102" font-weight="700" letter-spacing="1">ACTION</text>
+  </g>
 </svg>
