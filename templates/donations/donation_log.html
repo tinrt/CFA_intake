@@ -17,7 +17,12 @@
         </div>
         <div class="form-row">
             <label for="site">Site Filter</label>
-            <input class="form-control" id="site" type="text" name="site" value="{{ site }}" placeholder="exact site name">
+            <select class="form-control" id="site" name="site">
+                <option value="">All sites</option>
+                {% for site_item in active_sites %}
+                <option value="{{ site_item.name }}" {% if site_item.name == site %}selected{% endif %}>{{ site_item.name }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="form-row">
             <button class="btn" type="submit">Apply Filter</button>
@@ -65,7 +70,7 @@
         {% for donation in donations %}
             <tr>
                 <td>{{ donation.donation_date }}</td>
-                <td>{{ donation.site_name }}</td>
+                <td>{{ donation.site.name }}</td>
                 <td>{{ donation.donor_name }}</td>
                 <td>{{ donation.email|default:"-" }}</td>
                 <td>{{ donation.phone_number|default:"-" }}</td>
