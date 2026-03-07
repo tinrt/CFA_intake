@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Donation Warehouse{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --panel: #ffffff;
+            --text: #1e2933;
+            --muted: #637381;
+            --line: #d7dee4;
+            --primary: #0a6c74;
+            --primary-strong: #075158;
+            --accent: #efb036;
+            --danger: #b42318;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background: linear-gradient(180deg, #f4f9fb 0%, #edf2f5 100%);
+            color: var(--text);
+        }
+
+        header {
+            padding: 14px 20px;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 650;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand img {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 3px;
+            object-fit: contain;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        nav a, nav button {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            background: transparent;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.92rem;
+        }
+
+        nav a:hover, nav button:hover { background: rgba(255, 255, 255, 0.15); }
+
+        main {
+            max-width: 1080px;
+            margin: 22px auto;
+            padding: 0 16px 24px;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 22px rgba(20, 40, 60, 0.06);
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        }
+
+        .form-row { margin-bottom: 12px; }
+        .form-row label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 9px 10px;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 108, 116, 0.12);
+        }
+
+        .btn {
+            border: 0;
+            background: var(--primary);
+            color: #fff;
+            padding: 9px 13px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover { background: var(--primary-strong); }
+
+        .btn-secondary {
+            background: #fff;
+            color: var(--text);
+            border: 1px solid var(--line);
+        }
+
+        .muted { color: var(--muted); }
+
+        .stats {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            margin-bottom: 14px;
+        }
+
+        .stat {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px;
+            background: #fff;
+        }
+
+        .stat b {
+            display: block;
+            font-size: 1.2rem;
+            margin-top: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        th, td {
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            padding: 8px;
+        }
+
+        th { background: #f8fafb; }
+
+        .errorlist {
+            margin: 0 0 8px;
+            color: var(--danger);
+            font-size: 0.9rem;
+            padding-left: 18px;
+        }
+
+        .help {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="brand">
+        <img src="{% static 'img/cfa-logo.svg' %}" alt="CFA logo">
+        <h1>Donation Receiving Warehouse</h1>
+    </div>
+    {% if user.is_authenticated %}
+    <nav>
+        <a href="{% url 'donation-create' %}">New Donation</a>
+        <a href="{% url 'donation-log' %}">Donation Log</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    </nav>
+    {% endif %}
+</header>
+<main>
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

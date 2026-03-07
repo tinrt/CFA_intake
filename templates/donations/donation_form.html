@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}New Donation{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h2 style="margin-top: 0;">Donation Intake</h2>
+    <p class="muted">Enter donation details. The notes field is required.</p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="grid">
+            <div class="form-row">
+                <label for="id_site_name">Site Name</label>
+                {{ form.site_name.errors }}
+                {{ form.site_name }}
+            </div>
+            <div class="form-row">
+                <label for="id_donation_date">Date</label>
+                {{ form.donation_date.errors }}
+                {{ form.donation_date }}
+            </div>
+            <div class="form-row">
+                <label for="id_donor_name">Donor Name</label>
+                {{ form.donor_name.errors }}
+                {{ form.donor_name }}
+                <datalist id="donor-name-suggestions"></datalist>
+            </div>
+            <div class="form-row">
+                <label for="id_email">Email</label>
+                {{ form.email.errors }}
+                {{ form.email }}
+                <datalist id="donor-email-suggestions"></datalist>
+            </div>
+            <div class="form-row">
+                <label for="id_phone_number">Phone Number</label>
+                {{ form.phone_number.errors }}
+                {{ form.phone_number }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label for="id_notes">Notes (required)</label>
+            {{ form.notes.errors }}
+            {{ form.notes }}
+            <div class="help">Add details such as item condition, quantity notes, or handling instructions.</div>
+        </div>
+
+        <button class="btn" type="submit">Save Donation</button>
+        <a class="btn btn-secondary" href="{% url 'donation-log' %}">View Log</a>
+    </form>
+</div>
+
+<script>
+(() => {
+    const donorInput = document.getElementById("id_donor_name");
+    const emailInput = document.getElementById("id_email");
+    const nameList = document.getElementById("donor-name-suggestions");
+    const emailList = document.getElementById("donor-email-suggestions");
+
+    let donorMap = {};
+
+    const updateLists = async (value) => {
+        if (!value || value.length < 1) {
+            nameList.innerHTML = "";
+            emailList.innerHTML = "";
+            donorMap = {};
+            return;
+        }
+
+        const res = await fetch(`/api/donor-suggestions/?q=${encodeURIComponent(value)}`);
+        if (!res.ok) {
+            return;
+        }
+
+        const payload = await res.json();
+        donorMap = {};
+        nameList.innerHTML = "";
+        emailList.innerHTML = "";
+
+        (payload.results || []).forEach((item) => {
+            const donorName = item.donor_name || "";
+            const donorEmail = item.email || "";
+
+            if (donorName) {
+                const optName = document.createElement("option");
+                optName.value = donorName;
+                optName.label = donorEmail ? `${donorName} (${donorEmail})` : donorName;
+                nameList.appendChild(optName);
+            }
+
+            if (donorEmail) {
+                const optEmail = document.createElement("option");
+                optEmail.value = donorEmail;
+                optEmail.label = donorName ? `${donorEmail} (${donorName})` : donorEmail;
+                emailList.appendChild(optEmail);
+            }
+
+            if (donorName || donorEmail) {
+                donorMap[donorName] = donorEmail;
+                donorMap[donorEmail] = donorName;
+            }
+        });
+    };
+
+    donorInput.addEventListener("input", (event) => {
+        updateLists(event.target.value);
+        const matchedEmail = donorMap[event.target.value];
+        if (matchedEmail && !emailInput.value) {
+            emailInput.value = matchedEmail;
+        }
+    });
+
+    emailInput.addEventListener("input", (event) => {
+        updateLists(event.target.value);
+        const matchedName = donorMap[event.target.value];
+        if (matchedName && !donorInput.value) {
+            donorInput.value = matchedName;
+        }
+    });
+})();
+</script>
+{% endblock %}

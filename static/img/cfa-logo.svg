@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-labelledby="title desc">
+  <title id="title">Center for Food Action logo</title>
+  <desc id="desc">CFA logo with navy text and green circular arc.</desc>
+  <rect width="420" height="420" fill="#ffffff"/>
+  <path d="M 25 245 A 185 185 0 0 1 360 135" fill="none" stroke="#6E993B" stroke-width="11"/>
+  <path d="M 360 135 A 175 175 0 0 1 220 395" fill="none" stroke="#6E993B" stroke-width="11"/>
+  <text x="70" y="245" fill="#113A64" font-size="125" font-weight="700" font-family="Arial, Helvetica, sans-serif" letter-spacing="1">CFA</text>
+  <text x="82" y="290" fill="#113A64" font-size="47" font-weight="600" font-family="Arial, Helvetica, sans-serif">Center for Food</text>
+  <text x="82" y="350" fill="#113A64" font-size="78" font-weight="700" font-family="Arial, Helvetica, sans-serif">ACTION</text>
+</svg>
