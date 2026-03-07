@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Donation
+from .models import Donation, Site
+
+
+@admin.register(Site)
+class SiteAdmin(admin.ModelAdmin):
+	list_display = ("name", "is_active")
+	search_fields = ("name",)
+	list_filter = ("is_active",)
 
 
 @admin.register(Donation)

@@ -1,6 +1,17 @@
 from django.db import models
 
 
+class Site(models.Model):
+	name = models.CharField(max_length=120, unique=True)
+	is_active = models.BooleanField(default=True)
+
+	class Meta:
+		ordering = ["name"]
+
+	def __str__(self) -> str:
+		return self.name
+
+
 class Donation(models.Model):
 	site_name = models.CharField(max_length=120)
 	donation_date = models.DateField()

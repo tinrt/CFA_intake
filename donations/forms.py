@@ -1,9 +1,14 @@
 from django import forms
 
-from .models import Donation
+from .models import Donation, Site
 
 
 class DonationForm(forms.ModelForm):
+    site_name = forms.ModelChoiceField(
+        queryset=Site.objects.filter(is_active=True).order_by("name"),
+        empty_label="Select site",
+    )
+
     class Meta:
         model = Donation
         fields = [
@@ -28,3 +33,7 @@ class DonationForm(forms.ModelForm):
         self.fields["notes"].required = True
         self.fields["donor_name"].widget.attrs["list"] = "donor-name-suggestions"
         self.fields["email"].widget.attrs["list"] = "donor-email-suggestions"
+
+    def clean_site_name(self):
+        site = self.cleaned_data["site_name"]
+        return site.name
