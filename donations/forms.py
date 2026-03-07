@@ -28,6 +28,7 @@ class DonationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
+            Site.ensure_default_sites()
             site_queryset = Site.objects.filter(is_active=True).order_by("name")
             # Force a cheap query now so missing table errors are caught here, not in template rendering.
             site_queryset.exists()
