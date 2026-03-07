@@ -28,9 +28,13 @@ class DonationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
-            self.fields["site_name"].queryset = Site.objects.filter(is_active=True).order_by("name")
+            site_queryset = Site.objects.filter(is_active=True).order_by("name")
+            # Force a cheap query now so missing table errors are caught here, not in template rendering.
+            site_queryset.exists()
+            self.fields["site_name"].queryset = site_queryset
         except (OperationalError, ProgrammingError):
             self.fields["site_name"].queryset = Site.objects.none()
+            self.fields["site_name"].help_text = "Site table not ready. Run migrations."
 
         for name, field in self.fields.items():
             field.widget.attrs.setdefault("class", "form-control")
