@@ -1,11 +1,12 @@
 from django import forms
+from django.db.utils import OperationalError, ProgrammingError
 
 from .models import Donation, Site
 
 
 class DonationForm(forms.ModelForm):
     site_name = forms.ModelChoiceField(
-        queryset=Site.objects.filter(is_active=True).order_by("name"),
+        queryset=Site.objects.none(),
         empty_label="Select site",
     )
 
@@ -26,6 +27,11 @@ class DonationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        try:
+            self.fields["site_name"].queryset = Site.objects.filter(is_active=True).order_by("name")
+        except (OperationalError, ProgrammingError):
+            self.fields["site_name"].queryset = Site.objects.none()
+
         for name, field in self.fields.items():
             field.widget.attrs.setdefault("class", "form-control")
             field.widget.attrs.setdefault("autocomplete", "off")
