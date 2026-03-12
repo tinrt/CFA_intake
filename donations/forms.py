@@ -4,10 +4,21 @@ from django.db.utils import OperationalError, ProgrammingError
 from .models import Donation, Site
 
 
+
 class DonationForm(forms.ModelForm):
     site = forms.ModelChoiceField(
         queryset=Site.objects.none(),
         empty_label="Select site",
+    )
+    donor_type = forms.ChoiceField(
+        choices=[
+            ("Civic", "Civic"),
+            ("Religious", "Religious"),
+            ("Corporate", "Corporate"),
+            ("Individual", "Individual"),
+        ],
+        widget=forms.Select,
+        initial="Individual",
     )
 
     class Meta:
@@ -16,6 +27,7 @@ class DonationForm(forms.ModelForm):
             "site",
             "donation_date",
             "donor_name",
+            "donor_type",
             "email",
             "phone_number",
             "notes",

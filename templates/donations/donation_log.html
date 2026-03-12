@@ -25,8 +25,28 @@
             </select>
         </div>
         <div class="form-row">
+            <label for="donor_type">Donor Category</label>
+            <select class="form-control" id="donor_type" name="donor_type">
+                {% for value, label in donor_type_choices %}
+                <option value="{{ value }}" {% if value == donor_type %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-row">
+            <label for="date_from">From Date</label>
+            <input class="form-control" id="date_from" type="date" name="date_from" value="{{ date_from }}">
+        </div>
+        <div class="form-row">
+            <label for="date_to">To Date</label>
+            <input class="form-control" id="date_to" type="date" name="date_to" value="{{ date_to }}">
+        </div>
+        <div class="form-row">
             <button class="btn" type="submit">Apply Filter</button>
-            <a class="btn btn-secondary" href="{% url 'donation-log' %}">Reset</a>
+            <a class="btn" href="{% url 'donation-log' %}">Reset</a>
+        </div>
+        <div class="form-row">
+            <a class="btn" href="{% url 'donation-export-csv' %}?q={{ query }}&site={{ site }}&donor_type={{ donor_type }}&date_from={{ date_from }}&date_to={{ date_to }}" target="_blank">Export CSV</a>
+            <a class="btn" href="{% url 'donation-export-pdf' %}?q={{ query }}&site={{ site }}&donor_type={{ donor_type }}&date_from={{ date_from }}&date_to={{ date_to }}" target="_blank">Export PDF</a>
         </div>
     </form>
 </div>
@@ -61,6 +81,7 @@
                 <th>Date</th>
                 <th>Site</th>
                 <th>Donor</th>
+                <th>Type</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Notes</th>
@@ -72,6 +93,7 @@
                 <td>{{ donation.donation_date }}</td>
                 <td>{{ donation.site.name }}</td>
                 <td>{{ donation.donor_name }}</td>
+                <td>{{ donation.donor_type }}</td>
                 <td>{{ donation.email|default:"-" }}</td>
                 <td>{{ donation.phone_number|default:"-" }}</td>
                 <td>{{ donation.notes }}</td>

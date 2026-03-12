@@ -28,6 +28,11 @@
                 <datalist id="donor-name-suggestions"></datalist>
             </div>
             <div class="form-row">
+                <label>Donor Type</label>
+                {{ form.donor_type.errors }}
+                {{ form.donor_type }}
+            </div>
+            <div class="form-row">
                 <label for="id_email">Email</label>
                 {{ form.email.errors }}
                 {{ form.email }}

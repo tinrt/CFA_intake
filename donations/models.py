@@ -13,9 +13,16 @@ class Site(models.Model):
 
 
 class Donation(models.Model):
+    DONOR_TYPE_CHOICES = [
+        ("Civic", "Civic"),
+        ("Religious", "Religious"),
+        ("Corporate", "Corporate"),
+        ("Individual", "Individual"),
+    ]
     site = models.ForeignKey(Site, on_delete=models.PROTECT, related_name="donations")
     donation_date = models.DateField()
     donor_name = models.CharField(max_length=120)
+    donor_type = models.CharField(max_length=16, choices=DONOR_TYPE_CHOICES, default="Individual")
     email = models.EmailField(blank=True)
     phone_number = models.CharField(max_length=30, blank=True)
     notes = models.TextField()
