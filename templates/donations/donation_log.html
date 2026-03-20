@@ -75,6 +75,7 @@
 
 <div class="panel">
     <h3 style="margin-top: 0;">Donation Log</h3>
+    <div class="table-responsive">
     <table>
         <thead>
             <tr>
@@ -84,6 +85,13 @@
                 <th>Type</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Address</th>
+                <th># of Bags</th>
+                <th># of Boxes</th>
+                <th>Cash/Check $</th>
+                <th>Gift Cards $</th>
+                <th>Other Donation</th>
+                <th>Total Weight (lbs)</th>
                 <th>Notes</th>
             </tr>
         </thead>
@@ -96,6 +104,13 @@
                 <td>{{ donation.donor_type }}</td>
                 <td>{{ donation.email|default:"-" }}</td>
                 <td>{{ donation.phone_number|default:"-" }}</td>
+                <td>{{ donation.address|default:"-" }}</td>
+                <td>{{ donation.num_bags|default:"-" }}</td>
+                <td>{{ donation.num_boxes|default:"-" }}</td>
+                <td>{{ donation.cash_check|default:"-" }}</td>
+                <td>{{ donation.gift_cards|default:"-" }}</td>
+                <td>{{ donation.other_donation|default:"-" }}</td>
+                <td>{{ donation.total_weight|default:"-" }}</td>
                 <td>{{ donation.notes }}</td>
             </tr>
         {% empty %}
@@ -103,5 +118,6 @@
         {% endfor %}
         </tbody>
     </table>
+    </div>
 </div>
 {% endblock %}

@@ -37,7 +37,9 @@ def donation_export_csv(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="donations.csv"'
     writer = csv.writer(response)
-    writer.writerow(["Date", "Site", "Donor", "Type", "Email", "Phone", "Notes"])
+    writer.writerow([
+        "Date", "Site", "Donor", "Type", "Email", "Phone", "Address", "# of Bags", "# of Boxes", "Cash/Check $", "Gift Cards $", "Other Donation", "Total Weight (lbs)", "Notes"
+    ])
     for d in donations:
         writer.writerow([
             d.donation_date,
@@ -46,6 +48,13 @@ def donation_export_csv(request):
             d.donor_type,
             d.email,
             d.phone_number,
+            d.address,
+            d.num_bags,
+            d.num_boxes,
+            d.cash_check,
+            d.gift_cards,
+            d.other_donation,
+            d.total_weight,
             d.notes,
         ])
     return response
@@ -87,8 +96,10 @@ def donation_export_pdf(request):
     width, height = landscape(letter)
 
     # Table header
-    columns = ["Date", "Site", "Donor", "Type", "Email", "Phone", "Notes"]
-    col_widths = [1*inch, 1.5*inch, 1.5*inch, 1*inch, 2*inch, 1.2*inch, 3*inch]
+    columns = [
+        "Date", "Site", "Donor", "Type", "Email", "Phone", "Address", "# of Bags", "# of Boxes", "Cash/Check $", "Gift Cards $", "Other Donation", "Total Weight (lbs)", "Notes"
+    ]
+    col_widths = [1*inch, 1.2*inch, 1.2*inch, 0.8*inch, 1.2*inch, 1*inch, 1.5*inch, 0.8*inch, 0.8*inch, 1*inch, 1*inch, 1.2*inch, 1*inch, 2*inch]
     x = 0.5 * inch
     y = height - 0.75 * inch
     for i, col in enumerate(columns):
@@ -108,7 +119,14 @@ def donation_export_pdf(request):
             d.donor_type,
             d.email,
             d.phone_number,
-            (d.notes[:60] + ("..." if len(d.notes) > 60 else "")),
+            d.address,
+            str(d.num_bags) if d.num_bags is not None else "-",
+            str(d.num_boxes) if d.num_boxes is not None else "-",
+            str(d.cash_check) if d.cash_check is not None else "-",
+            str(d.gift_cards) if d.gift_cards is not None else "-",
+            d.other_donation,
+            str(d.total_weight) if d.total_weight is not None else "-",
+            (d.notes[:60] + ("..." if d.notes and len(d.notes) > 60 else "")),
         ]
         for i, value in enumerate(row):
             c.drawString(x, y, value if value else "-")

@@ -43,6 +43,46 @@
                 {{ form.phone_number.errors }}
                 {{ form.phone_number }}
             </div>
+            <div class="form-row">
+                <label for="id_address">Address</label>
+                {{ form.address.errors }}
+                {{ form.address }}
+            </div>
+        </div>
+
+        <hr style="margin: 2em 0;">
+
+        <div class="grid">
+            <div class="form-row">
+                <label for="id_num_bags"># of Bags</label>
+                {{ form.num_bags.errors }}
+                {{ form.num_bags }}
+            </div>
+            <div class="form-row">
+                <label for="id_num_boxes"># of Boxes</label>
+                {{ form.num_boxes.errors }}
+                {{ form.num_boxes }}
+            </div>
+            <div class="form-row">
+                <label for="id_cash_check">Cash/Check $</label>
+                {{ form.cash_check.errors }}
+                {{ form.cash_check }}
+            </div>
+            <div class="form-row">
+                <label for="id_gift_cards">Gift Cards $</label>
+                {{ form.gift_cards.errors }}
+                {{ form.gift_cards }}
+            </div>
+            <div class="form-row">
+                <label for="id_other_donation">Other Donation</label>
+                {{ form.other_donation.errors }}
+                {{ form.other_donation }}
+            </div>
+            <div class="form-row">
+                <label for="id_total_weight">Total Weight (lbs)</label>
+                {{ form.total_weight.errors }}
+                {{ form.total_weight }}
+            </div>
         </div>
 
         <div class="form-row">

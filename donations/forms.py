@@ -30,6 +30,13 @@ class DonationForm(forms.ModelForm):
             "donor_type",
             "email",
             "phone_number",
+            "address",
+            "num_bags",
+            "num_boxes",
+            "cash_check",
+            "gift_cards",
+            "other_donation",
+            "total_weight",
             "notes",
         ]
         widgets = {
@@ -52,7 +59,18 @@ class DonationForm(forms.ModelForm):
             field.widget.attrs.setdefault("class", "form-control")
             field.widget.attrs.setdefault("autocomplete", "off")
 
-        self.fields["notes"].required = True
-        self.fields["donor_name"].widget.attrs["list"] = "donor-name-suggestions"
+        self.fields["notes"].required = False
+        self.fields["donor_name"].required = False
+        self.fields["donor_type"].required = False
+        self.fields["email"].required = False
+        self.fields["phone_number"].required = False
+        self.fields["address"].required = False
+        self.fields["num_bags"].required = False
+        self.fields["num_boxes"].required = False
+        self.fields["cash_check"].required = False
+        self.fields["gift_cards"].required = False
+        self.fields["other_donation"].required = False
+        self.fields["total_weight"].required = False
+        self.fields["notes"].widget.attrs["list"] = "donor-name-suggestions"
         self.fields["email"].widget.attrs["list"] = "donor-email-suggestions"
 

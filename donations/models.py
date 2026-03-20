@@ -21,11 +21,18 @@ class Donation(models.Model):
     ]
     site = models.ForeignKey(Site, on_delete=models.PROTECT, related_name="donations")
     donation_date = models.DateField()
-    donor_name = models.CharField(max_length=120)
-    donor_type = models.CharField(max_length=16, choices=DONOR_TYPE_CHOICES, default="Individual")
+    donor_name = models.CharField(max_length=120, blank=True)
+    donor_type = models.CharField(max_length=16, choices=DONOR_TYPE_CHOICES, default="Individual", blank=True)
     email = models.EmailField(blank=True)
     phone_number = models.CharField(max_length=30, blank=True)
-    notes = models.TextField()
+    address = models.CharField(max_length=255, blank=True)
+    num_bags = models.PositiveIntegerField(null=True, blank=True, verbose_name="# of Bags")
+    num_boxes = models.PositiveIntegerField(null=True, blank=True, verbose_name="# of Boxes")
+    cash_check = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Cash/Check $")
+    gift_cards = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Gift Cards $")
+    other_donation = models.CharField(max_length=255, blank=True, verbose_name="Other Donation")
+    total_weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Total Weight (lbs)")
+    notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
