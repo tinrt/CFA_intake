@@ -5,8 +5,11 @@
 {% block content %}
 <div class="panel">
     <h2 style="margin-top: 0;">Donation Intake</h2>
-    <p class="muted">Enter donation details. The notes field is required.</p>
+    <p class="muted">Enter donation details.</p>
 
+    {% if success %}
+        <div class="alert alert-success" style="margin-bottom: 16px;">Donation saved successfully.</div>
+    {% endif %}
     <form method="post" novalidate>
         {% csrf_token %}
 
@@ -31,6 +34,11 @@
                 <label>Donor Type</label>
                 {{ form.donor_type.errors }}
                 {{ form.donor_type }}
+            </div>
+            <div class="form-row">
+                <label for="id_organization">Organization</label>
+                {{ form.organization.errors }}
+                {{ form.organization }}
             </div>
             <div class="form-row">
                 <label for="id_email">Email</label>

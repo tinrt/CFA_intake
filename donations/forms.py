@@ -28,6 +28,7 @@ class DonationForm(forms.ModelForm):
             "donation_date",
             "donor_name",
             "donor_type",
+            "organization",
             "email",
             "phone_number",
             "address",

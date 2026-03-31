@@ -165,10 +165,12 @@ def home(request):
 
 @login_required
 def donation_create(request):
+    success = False
     if request.method == "POST":
         form = DonationForm(request.POST)
         if form.is_valid():
             donation = form.save()
+            success = True
             if donation.email:
                 send_mail(
                     subject="Donation Verification",
@@ -184,11 +186,11 @@ def donation_create(request):
                     recipient_list=[donation.email],
                     fail_silently=True,
                 )
-            return redirect("donation-log")
+            form = DonationForm(initial={"donation_date": date.today()})
     else:
         form = DonationForm(initial={"donation_date": date.today()})
 
-    return render(request, "donations/donation_form.html", {"form": form})
+    return render(request, "donations/donation_form.html", {"form": form, "success": success})
 
 
 @login_required

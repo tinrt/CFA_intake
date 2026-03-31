@@ -23,6 +23,7 @@ class Donation(models.Model):
     donation_date = models.DateField()
     donor_name = models.CharField(max_length=120, blank=True)
     donor_type = models.CharField(max_length=16, choices=DONOR_TYPE_CHOICES, default="Individual", blank=True)
+    organization = models.CharField(max_length=120, blank=True)
     email = models.EmailField(blank=True)
     phone_number = models.CharField(max_length=30, blank=True)
     address = models.CharField(max_length=255, blank=True)

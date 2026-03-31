@@ -12,6 +12,6 @@ class SiteAdmin(admin.ModelAdmin):
 
 @admin.register(Donation)
 class DonationAdmin(admin.ModelAdmin):
-    list_display = ("site", "donation_date", "donor_name", "email", "phone_number")
+    list_display = ("site", "donation_date", "donor_name", "donor_type", "organization", "email", "phone_number")
     search_fields = ("site__name", "donor_name", "email", "phone_number", "notes")
     list_filter = ("site", "donation_date")
