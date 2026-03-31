@@ -5,7 +5,7 @@
 {% block content %}
 <div class="panel">
     <h2 style="margin-top: 0;">Donation Intake</h2>
-    <p class="muted">Enter donation details.</p>
+
 
     {% if success %}
         <div class="alert alert-success" style="margin-bottom: 16px;">Donation saved successfully.</div>
@@ -14,11 +14,12 @@
         {% csrf_token %}
 
         <div class="grid">
+            {% if site %}
             <div class="form-row">
-                <label for="id_site">Site Name</label>
-                {{ form.site.errors }}
-                {{ form.site }}
+                <label>Site Name</label>
+                <div style="padding: 8px 0 8px 0; font-weight: bold;">{{ site.name }}</div>
             </div>
+            {% endif %}
             <div class="form-row">
                 <label for="id_donation_date">Date</label>
                 {{ form.donation_date.errors }}
@@ -94,7 +95,7 @@
         </div>
 
         <div class="form-row">
-            <label for="id_notes">Notes (required)</label>
+            <label for="id_notes">Notes</label>
             {{ form.notes.errors }}
             {{ form.notes }}
             <div class="help">Add details such as item condition, quantity notes, or handling instructions.</div>

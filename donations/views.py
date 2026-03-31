@@ -1,11 +1,18 @@
 
-
 import csv
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Count, F, Q
+from datetime import date, timedelta
+from django.core.mail import send_mail
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from .models import Donation, Site
+from .forms import DonationForm
+from .site_select_form import SiteSelectForm
+
 
 @login_required
 def donation_export_csv(request):
@@ -160,16 +167,39 @@ from .models import Donation, Site
 def home(request):
     if not request.user.is_authenticated:
         return redirect("login")
+    if not request.session.get("site_id"):
+        return redirect("site-select")
     return redirect("donation-create")
 
 
+def site_select(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    if request.method == "POST":
+        form = SiteSelectForm(request.POST)
+        if form.is_valid():
+            request.session["site_id"] = form.cleaned_data["site"].id
+            return redirect("donation-create")
+    else:
+        form = SiteSelectForm()
+    return render(request, "donations/site_select.html", {"form": form})
+
 @login_required
 def donation_create(request):
+    site_id = request.session.get("site_id")
+    if not site_id:
+        return redirect("site-select")
+    try:
+        site = Site.objects.get(id=site_id)
+    except Site.DoesNotExist:
+        return redirect("site-select")
     success = False
     if request.method == "POST":
         form = DonationForm(request.POST)
         if form.is_valid():
-            donation = form.save()
+            donation = form.save(commit=False)
+            donation.site = site
+            donation.save()
             success = True
             if donation.email:
                 send_mail(
@@ -190,7 +220,7 @@ def donation_create(request):
     else:
         form = DonationForm(initial={"donation_date": date.today()})
 
-    return render(request, "donations/donation_form.html", {"form": form, "success": success})
+    return render(request, "donations/donation_form.html", {"form": form, "success": success, "site": site})
 
 
 @login_required

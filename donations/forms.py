@@ -6,10 +6,18 @@ from .models import Donation, Site
 
 
 class DonationForm(forms.ModelForm):
-    site = forms.ModelChoiceField(
-        queryset=Site.objects.none(),
-        empty_label="Select site",
-    )
+    def clean(self):
+        cleaned_data = super().clean()
+        num_bags = cleaned_data.get("num_bags")
+        num_boxes = cleaned_data.get("num_boxes")
+        cash_check = cleaned_data.get("cash_check")
+        gift_cards = cleaned_data.get("gift_cards")
+        other_donation = cleaned_data.get("other_donation")
+        if not (num_bags or num_boxes or cash_check or gift_cards or (other_donation and other_donation.strip())):
+            raise forms.ValidationError(
+                "At least one of the following fields must be filled: # of Bags, # of Boxes, Cash/Check $, Gift Cards $, Other Donation."
+            )
+        return cleaned_data
     donor_type = forms.ChoiceField(
         choices=[
             ("Civic", "Civic"),
@@ -24,7 +32,6 @@ class DonationForm(forms.ModelForm):
     class Meta:
         model = Donation
         fields = [
-            "site",
             "donation_date",
             "donor_name",
             "donor_type",
@@ -47,14 +54,7 @@ class DonationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
-            site_queryset = Site.objects.filter(is_active=True).order_by("name")
-            # Force a cheap query now so missing table errors are caught here, not in template rendering.
-            site_queryset.exists()
-            self.fields["site"].queryset = site_queryset
-        except (OperationalError, ProgrammingError):
-            self.fields["site"].queryset = Site.objects.none()
-            self.fields["site"].help_text = "Site table not ready. Run migrations."
+        # 'site' is no longer a form field; no need to set queryset or help_text
 
         for name, field in self.fields.items():
             field.widget.attrs.setdefault("class", "form-control")

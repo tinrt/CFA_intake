@@ -1,9 +1,12 @@
 from django.urls import path
 
+
 from . import views
+from .site_select_form import SiteSelectForm
 
 urlpatterns = [
     path("", views.home, name="home"),
+    path("select-site/", views.site_select, name="site-select"),
     path("donations/new/", views.donation_create, name="donation-create"),
     path("donations/log/", views.donation_log, name="donation-log"),
     path("api/donor-suggestions/", views.donor_suggestions, name="donor-suggestions"),

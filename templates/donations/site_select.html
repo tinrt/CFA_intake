@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Select Site{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 460px; margin: 40px auto;">
+    <h2 style="margin-top: 0;">Select Site</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <label for="id_site">Site Name</label>
+            {{ form.site.errors }}
+            {{ form.site }}
+        </div>
+        <button class="btn" type="submit">Continue</button>
+    </form>
+</div>
+{% endblock %}
