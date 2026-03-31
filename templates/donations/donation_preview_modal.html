@@ -1,0 +1,23 @@
+<div>
+    <h3>Donation Preview</h3>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr><th>Date</th><td>{{ donation.donation_date }}</td></tr>
+        <tr><th>Site</th><td>{{ donation.site.name }}</td></tr>
+        <tr><th>Donor</th><td>{{ donation.donor_name }}</td></tr>
+        <tr><th>Type</th><td>{{ donation.donor_type }}</td></tr>
+        <tr><th>Organization</th><td>{{ donation.organization|default:"-" }}</td></tr>
+        <tr><th>Email</th><td>{{ donation.email|default:"-" }}</td></tr>
+        <tr><th>Phone</th><td>{{ donation.phone_number|default:"-" }}</td></tr>
+        <tr><th>Address</th><td>{{ donation.address|default:"-" }}</td></tr>
+        <tr><th># of Bags</th><td>{{ donation.num_bags|default:"-" }}</td></tr>
+        <tr><th># of Boxes</th><td>{{ donation.num_boxes|default:"-" }}</td></tr>
+        <tr><th>Cash/Check $</th><td>{{ donation.cash_check|default:"-" }}</td></tr>
+        <tr><th>Gift Cards $</th><td>{{ donation.gift_cards|default:"-" }}</td></tr>
+        <tr><th>Other Donation</th><td>{{ donation.other_donation|default:"-" }}</td></tr>
+        <tr><th>Total Weight (lbs)</th><td>{{ donation.total_weight|default:"-" }}</td></tr>
+        <tr><th>Notes</th><td>{{ donation.notes }}</td></tr>
+    </table>
+    <div style="margin-top:16px; text-align:right;">
+        <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">Close</button>
+    </div>
+</div>

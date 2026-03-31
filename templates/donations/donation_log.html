@@ -98,7 +98,7 @@
         </thead>
         <tbody>
         {% for donation in donations %}
-            <tr style="cursor:pointer;" onclick="openEditModal({{ donation.id }})">
+            <tr style="cursor:pointer;" onclick="window.location.href='{% url 'donation-detail' donation.id %}'">
                 <td>{{ donation.donation_date }}</td>
                 <td>{{ donation.site.name }}</td>
                 <td>{{ donation.donor_name }}</td>
@@ -122,4 +122,22 @@
     </table>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<div id="preview-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.35); z-index:1000; align-items:center; justify-content:center;">
+    <div id="preview-modal-content" style="background:#fff; border-radius:10px; max-width:600px; margin:40px auto; box-shadow:0 8px 22px rgba(20,40,60,0.18); position:relative; width:98vw; max-width:600px; min-width:280px; padding: 18px 12px;"></div>
+</div>
+<script>
+function openPreviewModal(id) {
+    fetch(`/donations/${id}/preview/`)
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById('preview-modal-content').innerHTML = html;
+            document.getElementById('preview-modal').style.display = 'flex';
+        });
+}
+function closePreviewModal() {
+    document.getElementById('preview-modal').style.display = 'none';
+}
+</script>
 {% endblock %}

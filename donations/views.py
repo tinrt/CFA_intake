@@ -13,6 +13,16 @@ from .models import Donation, Site
 from .forms import DonationForm
 from .site_select_form import SiteSelectForm
 
+@login_required
+def donation_detail(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    return render(request, "donations/donation_detail.html", {"donation": donation})
+
+@login_required
+def donation_preview_modal(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    return render(request, "donations/donation_preview_modal.html", {"donation": donation})
+
 
 @login_required
 def donation_export_csv(request):
