@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Count, F, Q
+from django.views.decorators.http import require_POST
 from datetime import date, timedelta
 from django.core.mail import send_mail
 from reportlab.lib.pagesizes import letter, landscape
@@ -16,12 +17,39 @@ from .site_select_form import SiteSelectForm
 @login_required
 def donation_detail(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
-    return render(request, "donations/donation_detail.html", {"donation": donation})
+    return render(request, "donations/donation_detail.html", {
+        "donation": donation,
+        "donor_type_choices": Donation.DONOR_TYPE_CHOICES,
+    })
 
 @login_required
 def donation_preview_modal(request, pk):
     donation = get_object_or_404(Donation, pk=pk)
-    return render(request, "donations/donation_preview_modal.html", {"donation": donation})
+    donor_type_choices = Donation.DONOR_TYPE_CHOICES
+    return render(request, "donations/donation_preview_modal.html", {
+        "donation": donation,
+        "donor_type_choices": donor_type_choices,
+    })
+
+
+@login_required
+def donation_edit(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    if request.method == "POST":
+        form = DonationForm(request.POST, instance=donation)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"success": True})
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+    return JsonResponse({"success": False}, status=405)
+
+
+@login_required
+@require_POST
+def donation_delete(request, pk):
+    donation = get_object_or_404(Donation, pk=pk)
+    donation.delete()
+    return JsonResponse({"success": True})
 
 
 @login_required

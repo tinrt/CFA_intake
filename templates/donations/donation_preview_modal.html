@@ -1,23 +1,134 @@
-<div>
-    <h3>Donation Preview</h3>
-    <table style="width:100%; border-collapse:collapse;">
-        <tr><th>Date</th><td>{{ donation.donation_date }}</td></tr>
-        <tr><th>Site</th><td>{{ donation.site.name }}</td></tr>
-        <tr><th>Donor</th><td>{{ donation.donor_name }}</td></tr>
-        <tr><th>Type</th><td>{{ donation.donor_type }}</td></tr>
-        <tr><th>Organization</th><td>{{ donation.organization|default:"-" }}</td></tr>
-        <tr><th>Email</th><td>{{ donation.email|default:"-" }}</td></tr>
-        <tr><th>Phone</th><td>{{ donation.phone_number|default:"-" }}</td></tr>
-        <tr><th>Address</th><td>{{ donation.address|default:"-" }}</td></tr>
-        <tr><th># of Bags</th><td>{{ donation.num_bags|default:"-" }}</td></tr>
-        <tr><th># of Boxes</th><td>{{ donation.num_boxes|default:"-" }}</td></tr>
-        <tr><th>Cash/Check $</th><td>{{ donation.cash_check|default:"-" }}</td></tr>
-        <tr><th>Gift Cards $</th><td>{{ donation.gift_cards|default:"-" }}</td></tr>
-        <tr><th>Other Donation</th><td>{{ donation.other_donation|default:"-" }}</td></tr>
-        <tr><th>Total Weight (lbs)</th><td>{{ donation.total_weight|default:"-" }}</td></tr>
-        <tr><th>Notes</th><td>{{ donation.notes }}</td></tr>
-    </table>
-    <div style="margin-top:16px; text-align:right;">
-        <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">Close</button>
+<div id="donation-preview-content">
+    <h3 style="margin-top:0;">Donation Preview</h3>
+    <form id="donation-edit-form">
+        {% csrf_token %}
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <th style="text-align:left; padding:4px 8px; width:38%;">Date</th>
+                <td style="padding:4px 8px;"><input type="date" name="donation_date" value="{{ donation.donation_date }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Site</th>
+                <td style="padding:4px 8px;"><input type="text" value="{{ donation.site.name }}" class="form-control" readonly style="background:#f5f5f5;" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Donor</th>
+                <td style="padding:4px 8px;"><input type="text" name="donor_name" value="{{ donation.donor_name }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Type</th>
+                <td style="padding:4px 8px;">
+                    <select name="donor_type" class="form-control">
+                        {% for value, label in donor_type_choices %}
+                        <option value="{{ value }}" {% if donation.donor_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Organization</th>
+                <td style="padding:4px 8px;"><input type="text" name="organization" value="{{ donation.organization }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Email</th>
+                <td style="padding:4px 8px;"><input type="email" name="email" value="{{ donation.email }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Phone</th>
+                <td style="padding:4px 8px;"><input type="text" name="phone_number" value="{{ donation.phone_number }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Address</th>
+                <td style="padding:4px 8px;"><input type="text" name="address" value="{{ donation.address }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;"># of Bags</th>
+                <td style="padding:4px 8px;"><input type="number" min="0" name="num_bags" value="{{ donation.num_bags }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;"># of Boxes</th>
+                <td style="padding:4px 8px;"><input type="number" min="0" name="num_boxes" value="{{ donation.num_boxes }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Cash/Check $</th>
+                <td style="padding:4px 8px;"><input type="number" step="0.01" min="0" name="cash_check" value="{{ donation.cash_check }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Gift Cards $</th>
+                <td style="padding:4px 8px;"><input type="number" step="0.01" min="0" name="gift_cards" value="{{ donation.gift_cards }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Other Donation</th>
+                <td style="padding:4px 8px;"><input type="text" name="other_donation" value="{{ donation.other_donation }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px;">Total Weight (lbs)</th>
+                <td style="padding:4px 8px;"><input type="number" step="0.01" min="0" name="total_weight" value="{{ donation.total_weight }}" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th style="text-align:left; padding:4px 8px; vertical-align:top;">Notes</th>
+                <td style="padding:4px 8px;"><textarea name="notes" class="form-control" rows="3">{{ donation.notes }}</textarea></td>
+            </tr>
+        </table>
+    </form>
+    <div id="preview-save-error" style="color:red; margin-top:8px; display:none;"></div>
+    <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn btn-danger" id="delete-donation-btn">&#128465;Delete</button>
+        <div>
+            <button type="button" class="btn btn-success" id="save-donation-btn">&#128190;Save</button>
+            <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">Close</button>
+        </div>
     </div>
 </div>
+<script>
+(function() {
+    function getCsrf() {
+        const el = document.querySelector('#donation-edit-form [name=csrfmiddlewaretoken]');
+        return el ? el.value : '';
+    }
+
+    document.getElementById('save-donation-btn').onclick = function() {
+        const form = document.getElementById('donation-edit-form');
+        const data = new FormData(form);
+        const errBox = document.getElementById('preview-save-error');
+        errBox.style.display = 'none';
+        fetch('{% url "donation-edit" donation.pk %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrf() },
+            body: data
+        })
+        .then(r => r.json())
+        .then(resp => {
+            if (resp.success) {
+                closePreviewModal();
+                window.location.reload();
+            } else {
+                const msgs = Object.values(resp.errors || {}).flat().join(' ');
+                errBox.textContent = msgs || 'Failed to save.';
+                errBox.style.display = 'block';
+            }
+        })
+        .catch(() => {
+            errBox.textContent = 'Network error. Please try again.';
+            errBox.style.display = 'block';
+        });
+    };
+
+    document.getElementById('delete-donation-btn').onclick = function() {
+        if (!confirm('Delete this donation? This cannot be undone.')) return;
+        fetch('{% url "donation-delete" donation.pk %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrf() }
+        })
+        .then(r => r.json())
+        .then(resp => {
+            if (resp.success) {
+                closePreviewModal();
+                window.location.reload();
+            } else {
+                alert('Failed to delete.');
+            }
+        });
+    };
+})();
+</script>

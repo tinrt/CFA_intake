@@ -14,4 +14,6 @@ urlpatterns = [
     path("api/donor-suggestions/", views.donor_suggestions, name="donor-suggestions"),
     path("donations/export/csv/", views.donation_export_csv, name="donation-export-csv"),
     path("donations/export/pdf/", views.donation_export_pdf, name="donation-export-pdf"),
+    path("donations/<int:pk>/edit/", views.donation_edit, name="donation-edit"),
+    path("donations/<int:pk>/delete/", views.donation_delete, name="donation-delete"),
 ]
