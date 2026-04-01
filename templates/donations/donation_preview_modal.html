@@ -5,7 +5,7 @@
         <table style="width:100%; border-collapse:collapse;">
             <tr>
                 <th style="text-align:left; padding:4px 8px; width:38%;">Date</th>
-                <td style="padding:4px 8px;"><input type="date" name="donation_date" value="{{ donation.donation_date }}" class="form-control" /></td>
+                <td style="padding:4px 8px;"><input type="date" name="donation_date" value="{{ donation.donation_date|date:'Y-m-d' }}" class="form-control" /></td>
             </tr>
             <tr>
                 <th style="text-align:left; padding:4px 8px;">Site</th>
