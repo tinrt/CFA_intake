@@ -12,6 +12,7 @@ urlpatterns = [
         path("donations/log/", views.donation_log, name="donation-log"),
         path("donations/<int:pk>/preview/", views.donation_preview_modal, name="donation-preview-modal"),
     path("api/donor-suggestions/", views.donor_suggestions, name="donor-suggestions"),
+    path("api/donor-autocomplete/", views.donor_autocomplete, name="donor-autocomplete"),
     path("donations/export/csv/", views.donation_export_csv, name="donation-export-csv"),
     path("donations/export/pdf/", views.donation_export_pdf, name="donation-export-pdf"),
     path("donations/<int:pk>/edit/", views.donation_edit, name="donation-edit"),

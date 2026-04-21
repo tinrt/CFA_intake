@@ -333,3 +333,45 @@ def donor_suggestions(request):
         .order_by("-total", "donor_name")[:10]
     )
     return JsonResponse({"results": list(donors)})
+
+
+@login_required
+def donor_autocomplete(request):
+    q     = request.GET.get("q", "").strip()
+    field = request.GET.get("field", "name")
+
+    if len(q) < 2:
+        return JsonResponse([], safe=False)
+
+    filter_map = {
+        "email": Q(email__icontains=q),
+        "phone": Q(phone_number__icontains=q),
+        "name":  Q(donor_name__icontains=q),
+    }
+    filter_q = filter_map.get(field, filter_map["name"])
+
+    rows = (
+        Donation.objects
+        .filter(filter_q)
+        .order_by("-donation_date", "-created_at")
+        .values("donor_name", "email", "phone_number", "address", "organization")
+    )
+
+    seen    = set()
+    results = []
+    for row in rows:
+        key = (row["donor_name"].strip().lower(), row["email"].strip().lower())
+        if key in seen:
+            continue
+        seen.add(key)
+        results.append({
+            "name":         row["donor_name"],
+            "email":        row["email"],
+            "phone":        row["phone_number"],
+            "address":      row["address"],
+            "organization": row["organization"],
+        })
+        if len(results) >= 8:
+            break
+
+    return JsonResponse(results, safe=False)
