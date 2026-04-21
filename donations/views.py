@@ -297,6 +297,7 @@ def donation_log(request):
 
     donor_type_choices = [
         ("", "All Categories"),
+        ("Anonymous", "Anonymous"),
         ("Civic", "Civic"),
         ("Religious", "Religious"),
         ("Corporate", "Corporate"),

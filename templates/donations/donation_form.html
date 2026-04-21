@@ -358,7 +358,6 @@
             <div class="wz-field-error" id="err-email"></div>
             {{ form.email.errors }}
             {{ form.email }}
-            <datalist id="donor-email-suggestions"></datalist>
           </div>
           <div class="wz-field">
             <label for="id_phone_number">Phone Number</label>
@@ -455,8 +454,6 @@
   const cgName     = document.getElementById("cg-name");
   const cgOrg      = document.getElementById("cg-org");
   const cgContact  = document.getElementById("cg-contact");
-  const nameList   = document.getElementById("donor-name-suggestions");
-  const emailList  = document.getElementById("donor-email-suggestions");
   const errEmail   = document.getElementById("err-email");
   const errPhone   = document.getElementById("err-phone");
 
@@ -543,46 +540,134 @@
     notesEl.placeholder = "Add details such as item condition, quantity notes, or handling instructions.";
   }
 
-  /* ── Donor autocomplete ───────────────────────────── */
-  let donorMap = {};
-
-  const updateLists = async (value) => {
-    if (!value || value.length < 1) {
-      nameList.innerHTML = ""; emailList.innerHTML = ""; donorMap = {}; return;
-    }
-    const res = await fetch(`/api/donor-suggestions/?q=${encodeURIComponent(value)}`);
-    if (!res.ok) return;
-    const payload = await res.json();
-    donorMap = {}; nameList.innerHTML = ""; emailList.innerHTML = "";
-    (payload.results || []).forEach((item) => {
-      const dn = item.donor_name || "";
-      const de = item.email      || "";
-      if (dn) {
-        const opt = document.createElement("option");
-        opt.value = dn; opt.label = de ? `${dn} (${de})` : dn;
-        nameList.appendChild(opt);
-      }
-      if (de) {
-        const opt = document.createElement("option");
-        opt.value = de; opt.label = dn ? `${de} (${dn})` : de;
-        emailList.appendChild(opt);
-      }
-      if (dn || de) { donorMap[dn] = de; donorMap[de] = dn; }
-    });
-  };
-
-  donorInput.addEventListener("input", (e) => {
-    updateLists(e.target.value);
-    const matched = donorMap[e.target.value];
-    if (matched && !emailInput.value) emailInput.value = matched;
-  });
-
-  // Email: live regex validation + autocomplete in one listener
+  // Email: live regex validation
   emailInput.addEventListener("input", (e) => {
     checkOptional(e.target, EMAIL_RE, errEmail, EMAIL_MSG);
-    updateLists(e.target.value);
-    const matched = donorMap[e.target.value];
-    if (matched && !donorInput.value) donorInput.value = matched;
+  });
+})();
+
+/* ── Rich donor autocomplete dropdowns ─────────────── */
+(function () {
+  const AC_URL     = '/api/donor-autocomplete/';
+  const MIN_CHARS  = 2;
+  const DEBOUNCE   = 300;
+
+  const fields = [
+    { el: document.getElementById('id_donor_name'),   field: 'name'  },
+    { el: document.getElementById('id_email'),         field: 'email' },
+    { el: document.getElementById('id_phone_number'),  field: 'phone' },
+  ];
+
+  // Inject absolutely-positioned dropdown box below each input
+  fields.forEach(f => {
+    const box = document.createElement('div');
+    box.className = 'ac-box';
+    box.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;margin-top:2px;z-index:9999;';
+    f.box = box;
+    f.hlIndex = -1;
+    f.el.parentNode.style.position = 'relative';
+    f.el.parentNode.appendChild(box);
+  });
+
+  let timer = null;
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function fill(donor) {
+    const map = {
+      id_donor_name:   donor.name         || '',
+      id_email:        donor.email        || '',
+      id_phone_number: donor.phone        || '',
+      id_address:      donor.address      || '',
+      id_organization: donor.organization || '',
+    };
+    Object.entries(map).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val) {
+        el.value = val;
+        el.classList.add('ac-filled');
+        setTimeout(() => el.classList.remove('ac-filled'), 700);
+      }
+    });
+  }
+
+  function render(f, data) {
+    const box = f.box;
+    box.innerHTML = '';
+    f.hlIndex = -1;
+    if (!data.length) {
+      box.innerHTML = '<div class="ac-msg">No matching donors found</div>';
+    } else {
+      data.forEach(donor => {
+        const row = document.createElement('div');
+        row.className = 'ac-row';
+        const sub = [donor.email, donor.phone].filter(Boolean).join(' · ');
+        row.innerHTML =
+          `<div class="ac-row-name">${esc(donor.name || '')}</div>` +
+          `<div class="ac-row-sub">${esc(sub)}</div>`;
+        row.addEventListener('mousedown', e => { e.preventDefault(); fill(donor); closeAll(); });
+        box.appendChild(row);
+      });
+    }
+    box.style.display = 'block';
+  }
+
+  function closeAll() {
+    fields.forEach(f => { f.box.style.display = 'none'; f.hlIndex = -1; });
+  }
+
+  function fetchFor(f) {
+    const q = f.el.value.trim();
+    if (q.length < MIN_CHARS) { f.box.style.display = 'none'; return; }
+    f.box.innerHTML = '<div class="ac-msg">Searching…</div>';
+    f.box.style.display = 'block';
+    fetch(`${AC_URL}?q=${encodeURIComponent(q)}&field=${f.field}`)
+      .then(r => r.json())
+      .then(data => { if (f.el.value.trim().length >= MIN_CHARS) render(f, data); })
+      .catch(() => { f.box.style.display = 'none'; });
+  }
+
+  fields.forEach(f => {
+    f.el.addEventListener('input', () => {
+      clearTimeout(timer);
+      if (f.el.value.trim().length < MIN_CHARS) { f.box.style.display = 'none'; return; }
+      timer = setTimeout(() => fetchFor(f), DEBOUNCE);
+    });
+
+    f.el.addEventListener('keydown', e => {
+      if (f.box.style.display === 'none') return;
+      const rows = Array.from(f.box.querySelectorAll('.ac-row'));
+      if (!rows.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        f.hlIndex = Math.min(f.hlIndex + 1, rows.length - 1);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        f.hlIndex = Math.max(f.hlIndex - 1, 0);
+      } else if (e.key === 'Enter' && f.hlIndex >= 0) {
+        e.preventDefault();
+        rows[f.hlIndex].dispatchEvent(new MouseEvent('mousedown'));
+        return;
+      } else if (e.key === 'Escape') {
+        f.box.style.display = 'none';
+        return;
+      }
+      rows.forEach((r, i) => r.classList.toggle('ac-row-hl', i === f.hlIndex));
+    });
+
+    f.el.addEventListener('blur', () => setTimeout(() => { f.box.style.display = 'none'; }, 160));
+  });
+
+  document.addEventListener('click', e => {
+    fields.forEach(f => {
+      if (!f.el.contains(e.target) && !f.box.contains(e.target)) {
+        f.box.style.display = 'none';
+      }
+    });
   });
 })();
 </script>
