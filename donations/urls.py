@@ -17,4 +17,5 @@ urlpatterns = [
     path("donations/export/pdf/", views.donation_export_pdf, name="donation-export-pdf"),
     path("donations/<int:pk>/edit/", views.donation_edit, name="donation-edit"),
     path("donations/<int:pk>/delete/", views.donation_delete, name="donation-delete"),
+    path("unsubscribe/<str:token>/", views.unsubscribe, name="unsubscribe"),
 ]

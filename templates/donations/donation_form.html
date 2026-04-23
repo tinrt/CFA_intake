@@ -426,6 +426,13 @@
           {{ form.notes }}
         </div>
 
+        <div class="wz-field" style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+          {{ form.opt_in_email }}
+          <label for="id_opt_in_email" style="margin:0;font-weight:normal;cursor:pointer;">
+            Send confirmation email to donor
+          </label>
+        </div>
+
         <div class="wz-nav wz-nav-split">
           <button type="button" class="wz-btn wz-btn-secondary" id="btn-back">← Back</button>
           <button type="submit" class="wz-btn wz-btn-primary">Save Donation</button>

@@ -53,6 +53,7 @@ class DonationForm(forms.ModelForm):
             "other_donation",
             "total_weight",
             "notes",
+            "opt_in_email",
         ]
         widgets = {
             "donation_date": forms.DateInput(attrs={"type": "date"}),
@@ -80,6 +81,9 @@ class DonationForm(forms.ModelForm):
         self.fields["gift_cards"].required = False
         self.fields["other_donation"].required = False
         self.fields["total_weight"].required = False
+        self.fields["opt_in_email"].required = False
+        self.fields["opt_in_email"].label = "Send confirmation email to donor"
+        self.fields["opt_in_email"].widget.attrs.pop("class", None)  # no form-control on checkbox
         self.fields["email"].widget.attrs["pattern"] = r"[^\s@]+@[^\s@]+\.[^\s@]{2,}"
         self.fields["email"].widget.attrs["title"] = "e.g. name@example.com"
         self.fields["phone_number"].validators.append(_phone_validator)
